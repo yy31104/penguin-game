@@ -145,9 +145,6 @@
     <ClInclude Include="..\..\player.h" />
     <ClInclude Include="..\..\save_load.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\penguin.exe" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
