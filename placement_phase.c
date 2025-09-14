@@ -26,8 +26,7 @@ void placement_phase(struct Penguin* penguin, struct players* player, struct Gam
         !gameState->hasPlacementPhaseEnded;
 
     if (!resuming) {
-        // 原来的 InitializeData(...)、问名字、问放置规则、
-        // read_board_dimensions()、generate_board()、show_board() ...
+        // read_board_dimensions()銆乬enerate_board()銆乻how_board() ...
     }
     else {
         printf("Resuming placement phase...\n");
@@ -68,7 +67,7 @@ void placement_phase(struct Penguin* penguin, struct players* player, struct Gam
             if (coordinates_are_valid(player->playr[curPlayer].penguins[player->playr[curPlayer].numberOfPlacedPenguins].penguinCoords, XY_values, gameState))
             {
                 set_penguin(player->currentPlayer, gameState, player->playr[curPlayer].numberOfPlacedPenguins, XY_values, player);
-                save_game("save.txt", gameState, player);   // ★ 每次放置后自动保存（覆盖）
+                save_game("save.txt", gameState, player);  
                 printf("[autosaved]\n");
                 show_board(gameState->board);
                 player->playr[curPlayer].numberOfPlacedPenguins++;
@@ -86,4 +85,5 @@ void placement_phase(struct Penguin* penguin, struct players* player, struct Gam
         gameState->hasPlacementPhaseEnded = 1;
         printf("The placing phase has ended\n");
     }
+
 }
