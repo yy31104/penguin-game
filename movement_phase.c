@@ -67,7 +67,7 @@ void movement_phase(struct Penguin* penguin, struct players* player, struct Game
         {
             move_penguin((player->currentPlayer), gameState, penID, coordXY, player);
 
-            save_game("save.txt", gameState, player);   // ★ 每次成功走子后自动保存
+            save_game("save.txt", gameState, player); 
             printf("[autosaved]\n");
 
             change_current_player(player);
@@ -77,4 +77,5 @@ void movement_phase(struct Penguin* penguin, struct players* player, struct Game
             printf("The given coordinates are incorrect. Please type different ones\n");
         }
     }
+
 }
