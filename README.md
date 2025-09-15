@@ -3,7 +3,6 @@
 > A fast, two‑player, hot‑seat strategy game for the terminal. Place and move penguins on an ice grid, collect fish, and outmaneuver your opponent.
 
 <p align="center">
-  <img alt="Penguin Game demo placeholder" src="assets/screenshot_01.png" width="720" />
 </p>
 
 ---
