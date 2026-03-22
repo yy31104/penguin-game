@@ -12,9 +12,9 @@
 int coordinates_are_valid(CoordXY currentCoords, CoordXY newCoords, struct GameState* gameState);
 
 /*Checks if every player has every penguin placed| Returns 1 if true, 0 if false*/
-int are_all_penguins_of_players_placed();
+int are_all_penguins_of_players_placed(void);
 /*Check if current number of penguins doesn't exceed the maximum number| Returns 1 if can, 0 if not*/
-int can_current_player_place_another_penguin();
+int can_current_player_place_another_penguin(void);
 
 /*Checks if a penguin can make at least one move
  * penID - integer, representing the ID of the penguin in penguins hierarchy (dependent on number of penguins)

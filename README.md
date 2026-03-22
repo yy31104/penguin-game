@@ -1,206 +1,120 @@
-# 🐧 Penguin Game
+# Penguin Game
 
-> A fast, two‑player, hot‑seat strategy game for the terminal. Place and move penguins on an ice grid, collect fish, and outmaneuver your opponent.
-
-<p align="center">
-</p>
-
----
-
-## Table of Contents
-
-* [Features](#features)
-* [Quick Start](#quick-start)
-* [Build Options](#build-options)
-* [How to Play](#how-to-play)
-* [Rules Summary](#rules-summary)
-* [Save & Resume](#save--resume)
-* [Project Structure](#project-structure)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Acknowledgements](#acknowledgements)
-
----
+Terminal strategy game for 2 players (human or AI).  
+Place penguins, collect fish, block routes, and finish with the highest score.
 
 ## Features
 
-* 🎮 **Local 2‑player hot‑seat** with player names
-* 🔄 **Two phases:** placement → movement
-* 🎲 **Procedural board:** tiles contain **1–3** fish
-* ➡️ **Simple moves:** one orthogonal step per turn (no diagonals)
-* 🐟 **Scoring:** collect fish from every tile you place/move onto
-* 💾 **Autosave:** a `save.txt` is written after every valid action
-* 📦 **Portable:** standard C11, builds with GCC/Clang/MSVC on Windows, Linux, and macOS
+- Two phases: `placement` -> `movement`
+- Game modes:
+  - `Human vs Human`
+  - `Human vs AI`
+- AI difficulty:
+  - `Easy` (random legal move)
+  - `Medium` (greedy heuristic)
+  - `Hard` (minimax + alpha-beta, shallow depth)
+- Random first player at game start
+- Autosave after every valid action
+- Load and continue from `save.txt`
+- Stronger input validation (`fgets + strtol`)
+- Board memory safety improvements (`create_board` / `board_destroy`)
 
----
+## Build and Run
 
-## Quick Start
+### Windows (GCC / clang)
 
-### Windows (MSVC)
-
-```bat
-cl /std:c11 /W4 /O2 /Fe:penguin.exe *.c
-penguin.exe
+```powershell
+cd C:\path\to\penguin-game
+gcc -std=c11 -O2 -Wall -Wextra -pedantic -o penguin.exe *.c
+.\penguin.exe
 ```
 
-### Windows (MinGW)
-
-```bat
-gcc -std=c11 -O2 -Wall -Wextra -o penguin.exe *.c
-penguin.exe
-```
+If you use LLVM/clang on Windows, the same command works.
 
 ### Linux / macOS
 
 ```bash
-gcc -std=c11 -O2 -Wall -Wextra -o penguin *.c
+gcc -std=c11 -O2 -Wall -Wextra -pedantic -o penguin *.c
 ./penguin
 ```
 
-> No external libraries required.
+## Gameplay Rules
 
----
-
-## Build Options
-
-### Option A — Visual Studio
-
-Open the project in **Visual Studio 2022+**, build in `Release|x64`, and run. If you prefer a clean, cross‑platform setup, consider adding the CMake file below.
-
-### Option B — CMake (cross‑platform)
-
-Add a `CMakeLists.txt` at the repository root (adjust the source list if needed):
-
-```cmake
-cmake_minimum_required(VERSION 3.15)
-project(penguin_game C)
-set(CMAKE_C_STANDARD 11)
-
-add_executable(penguin
-  board.c
-  checks.c
-  function.c
-  io_func.c
-  main.c
-  movement_phase.c
-  penguin.c
-  placement_phase.c
-  player.c
-  save_load.c
-)
-```
-
-Then:
-
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
-# Windows: .\build\Release\penguin.exe
-# Linux/macOS: ./build/penguin
-```
-
----
-
-## How to Play
-
-**Main Menu**
+### Main menu
 
 1. New game
-2. Load and continue (reads `save.txt`)
+2. Load and continue (`save.txt`)
 3. Exit
 
-**Options**
+### Setup flow (new game)
 
-* Toggle whether placement is restricted to **1‑fish** tiles (enter `2` = Yes, `1` = No)
+1. Choose mode: `Human vs Human` or `Human vs AI`
+2. If `Human vs AI`, choose difficulty:
+   - `1 Easy`
+   - `2 Medium`
+   - `3 Hard (minimax)`
+3. Choose placement option:
+   - `2` = place only on tiles with 1 fish
+   - `1` = place on any fish tile (1..3)
+4. Enter board size: `rows cols` (both >= 3)
+5. Enter human player names (AI gets auto name, e.g. `CPU-2`)
 
-**Setup**
+### Placement phase
 
-* Enter player names
-* Enter board size: `rows columns` (both ≥ 3), for example `8 8`
+- Players alternate placing penguins.
+- Default penguins per player: `2`.
+- Input is `row col` (1-based in UI).
+- Fish on that tile is immediately added to player's score.
+- If placement is restricted to 1-fish tiles and no legal 1-fish tiles remain:
+  - placement phase ends early automatically
+  - game proceeds to movement phase
 
-**Placement Phase**
+### Movement phase
 
-* Players alternate placing **2** penguins each
-* Input coordinates: `row column` (1‑based)
-* Immediately collect that tile’s fish
+- Choose one of your penguins, then choose destination.
+- Move exactly one tile orthogonally (up/down/left/right).
+- No diagonal move, no out-of-board move, no moving onto hole `0`, and no moving onto another penguin.
+- Old tile becomes hole `0`.
+- New tile fish is added to score.
 
-**Movement Phase**
+### End condition
 
-* Select a penguin by its current coordinates
-* Move exactly **one** tile **up / down / left / right**
-* You cannot move into holes `0`, onto occupied tiles, or outside the board
-* Gain fish from the new tile; the old tile becomes a hole
+- If current player has no legal move, turn is skipped to the other player.
+- Game ends only when **both players** have no legal moves.
 
-**End Game**
+## Save / Load
 
-* When a player has **no legal moves**, the game ends and scores are shown
-
----
-
-## Rules Summary
-
-* Placement: alternate until each player has **2 penguins**
-* Movement: **one** orthogonal step per turn
-* Scoring: gain fish from every tile placed/moved onto
-* End: game stops when a player cannot move
-
----
-
-## Save & Resume
-
-* **Autosave file:** `save.txt` in the working directory
-* **Autosave timing:** after every valid placement or move (UI shows `[autosaved]`)
-* **Resume:** choose **Load and continue** from the main menu if `save.txt` exists
-
----
+- Autosave file: `save.txt`
+- Save occurs after each valid placement/move.
+- Save format currently writes header `PENGUIN_SAVE 2`.
+- Loader supports old saves (`v1`) and new saves (`v2`).
+- `v2` includes AI-related fields:
+  - game mode
+  - AI difficulty
+  - player type (human/AI)
 
 ## Project Structure
 
+```text
+ai.c / ai.h            # AI move selection (random/greedy/minimax)
+board.c / board.h      # Board allocation, generation, rendering
+checks.c / checks.h    # Rules validation and mobility checks
+function.c / function.h# Small utility helpers
+io_func.c / io_func.h  # Input parsing and menu prompts
+main.c                 # Main loop and menu routing
+movement_phase.c / .h  # Movement phase turn logic
+penguin.c / penguin.h  # Apply placement/move on board + score updates
+placement_phase.c / .h # Placement phase logic
+player.c / player.h    # Player/game state models and helpers
+save_load.c / save_load.h # Save and load
 ```
-board.c             # Board generation & rendering
-checks.c            # Move/placement validation
-function.c          # Utility helpers (coords, diffs)
-io_func.c           # Prompts & input parsing
-main.c              # Menu, new/load flow
-movement_phase.c    # Turn loop & end conditions
-penguin.c           # Score & board updates
-placement_phase.c   # Placement logic & options
-player.c            # Player state utilities
-save_load.c         # Save/load system
-```
 
----
+## Notes
 
-## Roadmap
-
-* Computer opponents (AI) and difficulty levels
-* Variable penguin counts & fish distributions
-* Sliding / multi‑step movement, obstacles, power‑ups
-* GUI (SDL/ImGui) or Web UI
-* Multiple save slots & tougher input validation
-
----
-
-## Contributing
-
-Pull requests are welcome! For larger changes, please open an issue first to discuss what you’d like to change.
-
-### Development tips
-
-* Keep build artifacts out of Git (`.vs/`, `Debug/`, `Release/`, `*.exe`, `*.pdb`, `*.user`).
-* Prefer small, focused commits with clear messages.
-* Add comments around tricky game logic (placement & movement validation).
-
----
+- Build artifacts are ignored via `.gitignore` (`*.exe`, `build/`, etc.).
+- If `penguin.exe` is running, recompilation may fail with `Permission denied`.
+  - Close the running process first.
 
 ## License
 
-This project is licensed under the **MIT License**. See [`LICENSE.txt`](LICENSE.txt).
-
----
-
-## Acknowledgements
-
-* Inspired by the board game *Hey, That’s My Fish!* (streamlined rules and rectangular grid for a terminal experience).
-* Thanks to contributors and play‑testers!
+MIT (see `LICENSE.txt`)

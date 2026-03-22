@@ -6,13 +6,13 @@
 
 /*Ask the player for board dimensions
  * Returns variable of type CoordXY*/
-CoordXY read_board_dimensions();
+CoordXY read_board_dimensions(void);
 /*An i/o void used to get the coordinates from the user|
  * playersLoc - pointer, representing of global structure players
  * choosingAPenguin - integer, responsible for the choice of showing appropriate text*/
 CoordXY ask_for_coordinates(struct players* playersLoc, int choosingAPenguin);
 /*Make the UI show the winner and display players scores*/
-void display_winner();
+void display_winner(void);
 /*Asks the player to select the penguin during the game|
  * player - pointer, representing of global structure players
  * Returns the ID of the penguin (from 0 to max number of penguins)*/
@@ -26,4 +26,8 @@ void askPlayerForAName(struct players* player);
 /*A function used to ask player if penguins should be placed only on tile with 1 fish
  * gamestate - pointer, representing of global structure Gamestate*/
 void askAboutOptionsOfPlacing(struct GameState* gamestate);
+/*Asks for game mode: human vs human or human vs AI.*/
+GameMode ask_game_mode(void);
+/*Asks for AI difficulty in human vs AI mode.*/
+AIDifficulty ask_ai_difficulty(void);
 #endif

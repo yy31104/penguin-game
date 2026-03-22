@@ -9,15 +9,17 @@ void set_penguin(int curPlayer, struct GameState* gameState, int curPeng, CoordX
     switch (curPlayer) {
     case 1:
         players_l->playr[0].score += gameState->board.arr[coordXY.X][coordXY.Y];
-        gameState->board.arr[coordXY.X][coordXY.Y] = -1;
+        gameState->board.arr[coordXY.X][coordXY.Y] = TILE_P1;
         players_l->playr[0].penguins[curPeng].penguinCoords.X = coordXY.X;
         players_l->playr[0].penguins[curPeng].penguinCoords.Y = coordXY.Y;
+        players_l->playr[0].penguins[curPeng].can_make_any_move = 1;
         break;
     case 2:
         players_l->playr[1].score += gameState->board.arr[coordXY.X][coordXY.Y];
-        gameState->board.arr[coordXY.X][coordXY.Y] = -2;
+        gameState->board.arr[coordXY.X][coordXY.Y] = TILE_P2;
         players_l->playr[1].penguins[curPeng].penguinCoords.X = coordXY.X;
         players_l->playr[1].penguins[curPeng].penguinCoords.Y = coordXY.Y;
+        players_l->playr[1].penguins[curPeng].can_make_any_move = 1;
         break;
     }
 }
@@ -27,17 +29,17 @@ void move_penguin(int curPlayer, struct GameState* gameState, int curPeng, Coord
     switch (curPlayer) {
     case 1:
         players_l->playr[0].score += gameState->board.arr[coordXY.X][coordXY.Y];
-        gameState->board.arr[players_l->playr[0].penguins[curPeng].penguinCoords.X][players_l->playr[0].penguins[curPeng].penguinCoords.Y] = 0;
+        gameState->board.arr[players_l->playr[0].penguins[curPeng].penguinCoords.X][players_l->playr[0].penguins[curPeng].penguinCoords.Y] = TILE_HOLE;
         players_l->playr[0].penguins[curPeng].penguinCoords.X = coordXY.X;
         players_l->playr[0].penguins[curPeng].penguinCoords.Y = coordXY.Y;
-        gameState->board.arr[players_l->playr[0].penguins[curPeng].penguinCoords.X][players_l->playr[0].penguins[curPeng].penguinCoords.Y] = -1;
+        gameState->board.arr[players_l->playr[0].penguins[curPeng].penguinCoords.X][players_l->playr[0].penguins[curPeng].penguinCoords.Y] = TILE_P1;
         break;
     case 2:
         players_l->playr[1].score += gameState->board.arr[coordXY.X][coordXY.Y];
-        gameState->board.arr[players_l->playr[1].penguins[curPeng].penguinCoords.X][players_l->playr[1].penguins[curPeng].penguinCoords.Y] = 0;
+        gameState->board.arr[players_l->playr[1].penguins[curPeng].penguinCoords.X][players_l->playr[1].penguins[curPeng].penguinCoords.Y] = TILE_HOLE;
         players_l->playr[1].penguins[curPeng].penguinCoords.X = coordXY.X;
         players_l->playr[1].penguins[curPeng].penguinCoords.Y = coordXY.Y;
-        gameState->board.arr[players_l->playr[1].penguins[curPeng].penguinCoords.X][players_l->playr[1].penguins[curPeng].penguinCoords.Y] = -2;
+        gameState->board.arr[players_l->playr[1].penguins[curPeng].penguinCoords.X][players_l->playr[1].penguins[curPeng].penguinCoords.Y] = TILE_P2;
         break;
     }
 }

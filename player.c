@@ -13,7 +13,5 @@ void change_current_player(struct players* player)
 
 void set_current_player(struct players* player)
 {
-    srand((unsigned int)time(NULL));
-
     player->currentPlayer = rand() % 2 + 1;
 }

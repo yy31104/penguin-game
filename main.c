@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "placement_phase.h"
 #include "movement_phase.h"
 #include "function.h"
 #include "player.h"
 #include "penguin.h"
+#include "board.h"
 #include "save_load.h"
 
 static void zero_all(struct players* pl, struct GameState* gs) {
@@ -15,39 +17,62 @@ static void zero_all(struct players* pl, struct GameState* gs) {
     memset(gs, 0, sizeof * gs);
 }
 
+static int read_menu_choice(void)
+{
+    char line[32];
+    char* end = NULL;
+
+    if (!fgets(line, sizeof(line), stdin)) {
+        return -1;
+    }
+
+    long value = strtol(line, &end, 10);
+    if (end == line) {
+        return -1;
+    }
+
+    while (*end == ' ' || *end == '\t') {
+        ++end;
+    }
+    if (*end != '\n' && *end != '\0') {
+        return -1;
+    }
+
+    return (int)value;
+}
+
 int main(void)
 {
-    struct Penguin* penguin = (struct Penguin*)malloc(sizeof * penguin);
-    struct players* player = (struct players*)malloc(sizeof * player);
-    struct GameState* gs = (struct GameState*)malloc(sizeof * gs);
-    zero_all(player, gs);
+    struct Penguin penguin = { 0 };
+    struct players player = { 0 };
+    struct GameState gs = { 0 };
+    zero_all(&player, &gs);
+    srand((unsigned int)time(NULL));
 
     for (;;) {
-        int choice = 0;
+        int choice;
         printf("\n=== Penguin Game ===\n");
         printf("1) New game\n");
         printf("2) Load and continue (save.txt)\n");
         printf("3) Exit\n");
         printf("Choose: ");
-        if (scanf("%d", &choice) != 1) return 0;
-
-        int ch; while ((ch = getchar()) != '\n' && ch != EOF) {}
+        choice = read_menu_choice();
 
         if (choice == 1) {
-            zero_all(player, gs);
-            placement_phase(penguin, player, gs);
-            movement_phase(penguin, player, gs);
+            zero_all(&player, &gs);
+            placement_phase(&penguin, &player, &gs);
+            movement_phase(&penguin, &player, &gs);
         }
         else if (choice == 2) {
-            if (load_game("save.txt", gs, player)) {
+            if (load_game("save.txt", &gs, &player)) {
                 printf("Loaded save.txt.\n");
-                if (gs->hasPlacementPhaseEnded) {
-                    movement_phase(penguin, player, gs);
+                if (gs.hasPlacementPhaseEnded) {
+                    movement_phase(&penguin, &player, &gs);
                 }
                 else {
-                    placement_phase(penguin, player, gs);
-                    if (gs->hasPlacementPhaseEnded) {
-                        movement_phase(penguin, player, gs);
+                    placement_phase(&penguin, &player, &gs);
+                    if (gs.hasPlacementPhaseEnded) {
+                        movement_phase(&penguin, &player, &gs);
                     }
                 }
             }
@@ -58,10 +83,12 @@ int main(void)
         else if (choice == 3) {
             break;
         }
+        else {
+            printf("Invalid choice. Please select 1, 2, or 3.\n");
+        }
     }
 
-    if (gs->board.arr) delete_board(gs->board);
-    free(penguin); free(player); free(gs);
+    board_destroy(&gs.board);
     return EXIT_SUCCESS;
 }
 

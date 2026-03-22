@@ -1,0 +1,9 @@
+*.exe
+*.obj
+*.o
+*.out
+build/
+Debug/
+Release/
+.vs/
+save.txt

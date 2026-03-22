@@ -11,7 +11,7 @@ typedef struct {
 } CoordXY;
 
 /*A function of type CoordXY which divides the CoordXY variable into two integer values*/
-CoordXY functionReturnsTwoInts();
+CoordXY functionReturnsTwoInts(void);
 
 /*A function which counts the sum of absolute values of differences between new and old coordinates
  * curCoords - variable of type CoordXY, representing current coordinates

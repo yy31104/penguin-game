@@ -4,52 +4,59 @@
 #include "player.h"
 #include "function.h"
 
-Board generate_board(CoordXY rowsAndCols)
+Board create_board(int rows, int cols)
 {
-    struct GameState gameState;
-    int rows, cols;
-    srand((unsigned int)time(NULL));
-
-    Board newBoard;
-
-    newBoard.rows = rowsAndCols.X;
-    newBoard.cols = rowsAndCols.Y;
-    rows = newBoard.rows;
-    cols = newBoard.cols;
-    gameState.board.rows = rowsAndCols.X;
-    gameState.board.cols = rowsAndCols.Y;
-
-
-    gameState.board.arr = (int**)malloc(rows * sizeof(int*));
-    for (int i = 0; i < rows; i++)
-    {
-        gameState.board.arr[i] = (int*)malloc(cols * sizeof(int));
+    Board board = { 0 };
+    if (rows <= 0 || cols <= 0) {
+        return board;
     }
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            gameState.board.arr[i][j] = rand() % 3 + 1;
+    int** row_ptrs = (int**)malloc((size_t)rows * sizeof(int*));
+    int* data = (int*)malloc((size_t)rows * (size_t)cols * sizeof(int));
+    if (!row_ptrs || !data) {
+        free(row_ptrs);
+        free(data);
+        return board;
+    }
+
+    for (int r = 0; r < rows; ++r) {
+        row_ptrs[r] = data + ((size_t)r * (size_t)cols);
+    }
+
+    board.arr = row_ptrs;
+    board.rows = rows;
+    board.cols = cols;
+    return board;
+}
+
+Board generate_board(CoordXY rowsAndCols)
+{
+    Board newBoard = create_board(rowsAndCols.X, rowsAndCols.Y);
+    if (!newBoard.arr) {
+        return newBoard;
+    }
+
+    for (int i = 0; i < newBoard.rows; i++) {
+        for (int j = 0; j < newBoard.cols; j++) {
+            newBoard.arr[i][j] = (rand() % MAX_FISH) + MIN_FISH;
         }
     }
 
-    return gameState.board;
+    return newBoard;
 }
 
-//free memory
-void delete_board(Board board)
+// free memory
+void board_destroy(Board* board)
 {
-    if (!board.arr || board.rows <= 0 || board.cols <= 0) {
+    if (!board || !board->arr) {
         return;
     }
 
-    for (int i = 0; i < board.rows; i++)
-    {
-        if (board.arr[i] != NULL)
-        {
-            free(board.arr[i]);
-        }
-    }
-    free(board.arr);
+    free(board->arr[0]); // contiguous data block
+    free(board->arr);
+    board->arr = NULL;
+    board->rows = 0;
+    board->cols = 0;
 }
 
 
@@ -75,10 +82,10 @@ void show_board(Board board)
         for (int j = 0; j < board.cols; j++) {
             switch (board.arr[i][j])
             {
-            case -1:
+            case TILE_P1:
                 printf("\tP1");
                 break;
-            case -2:
+            case TILE_P2:
                 printf("\tP2");
                 break;
             default:
