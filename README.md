@@ -86,6 +86,7 @@ gcc -std=c11 -O2 -Wall -Wextra -pedantic -o penguin *.c
 
 - Autosave file: `save.txt`
 - Save occurs after each valid placement/move.
+- Save stores whose turn is next, so load resumes the exact turn order.
 - Save format currently writes header `PENGUIN_SAVE 2`.
 - Loader supports old saves (`v1`) and new saves (`v2`).
 - `v2` includes AI-related fields:

@@ -136,13 +136,14 @@ void placement_phase(struct Penguin* penguin, struct players* player, struct Gam
 
         if (coordinates_are_valid(current_coords, coordinates, gameState)) {
             set_penguin(player->currentPlayer, gameState, next_penguin_slot, coordinates, player);
-            save_game("save.txt", gameState, player);
-            printf("[autosaved]\n");
-            show_board(gameState->board);
 
             player->playr[curPlayer].numberOfPlacedPenguins++;
             placements_done++;
             change_current_player(player);
+
+            save_game("save.txt", gameState, player);
+            printf("[autosaved]\n");
+            show_board(gameState->board);
         }
         else {
             printf("The given coordinates are incorrect. Please type different ones\n");
@@ -154,4 +155,6 @@ void placement_phase(struct Penguin* penguin, struct players* player, struct Gam
         printf("Not all penguins were placed because no legal placement tiles remain.\n");
     }
     printf("The placing phase has ended\n");
+    save_game("save.txt", gameState, player);
+    printf("[autosaved]\n");
 }

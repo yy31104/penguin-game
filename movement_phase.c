@@ -113,10 +113,9 @@ void movement_phase(struct Penguin* penguin, struct players* player, struct Game
         if (coordinates_are_valid(player->playr[player->currentPlayer - 1].penguins[penID].penguinCoords, coordXY, gameState)) {
             move_penguin(player->currentPlayer, gameState, penID, coordXY, player);
 
+            change_current_player(player);
             save_game("save.txt", gameState, player);
             printf("[autosaved]\n");
-
-            change_current_player(player);
         }
         else {
             printf("The given coordinates are incorrect. Please type different ones\n");
